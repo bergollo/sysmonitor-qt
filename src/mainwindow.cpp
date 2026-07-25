@@ -6,7 +6,9 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QProgressBar>
+#include <QTabWidget>
 #include <QVBoxLayout>
+#include <QQuickWidget>
 
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
@@ -22,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     , temperatureLabel(new QLabel("Temperature: unavailable"))
     , cpuSeries(new QLineSeries)
     , chartView(new QChartView)
+    , qmlDashboard(new QQuickWidget)
 {
     setWindowTitle("System Monitor");
     resize(720, 520);
@@ -51,11 +54,20 @@ MainWindow::MainWindow(QWidget *parent)
     chartView->setChart(chart);
     chartView->setMinimumHeight(260);
 
-    auto *centralWidget = new QWidget;
-    auto *layout = new QVBoxLayout(centralWidget);
+    auto *widgetsPage = new QWidget;
+    auto *layout = new QVBoxLayout(widgetsPage);
     layout->addWidget(metrics);
     layout->addWidget(chartView);
-    setCentralWidget(centralWidget);
+
+    auto *tabs = new QTabWidget;
+    tabs->addTab(widgetsPage, "Widgets");
+    tabs->addTab(qmlDashboard, "QML");
+    setCentralWidget(tabs);
+}
+
+QQuickWidget *MainWindow::qmlView() const
+{
+    return qmlDashboard;
 }
 
 void MainWindow::updateStats(const SystemStats &stats)

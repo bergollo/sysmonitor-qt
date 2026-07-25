@@ -6,6 +6,7 @@ class QLabel;
 class QProgressBar;
 class QLineSeries;
 class QChartView;
+class QQuickWidget;
 struct SystemStats;
 
 class MainWindow final : public QMainWindow {
@@ -13,6 +14,8 @@ class MainWindow final : public QMainWindow {
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+
+    QQuickWidget *qmlView() const;
 
 public slots:
     void updateStats(const SystemStats &stats);
@@ -25,5 +28,6 @@ private:
     QLabel *temperatureLabel;
     QLineSeries *cpuSeries;
     QChartView *chartView;
+    QQuickWidget *qmlDashboard;
     int sampleIndex = 0;
 };
