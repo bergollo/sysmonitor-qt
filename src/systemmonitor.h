@@ -4,6 +4,8 @@
 #include <optional>
 #include <string>
 
+#include <QObject>
+
 struct CpuTimes {
     std::uint64_t user = 0;
     std::uint64_t nice = 0;
@@ -31,3 +33,21 @@ std::optional<MemoryInfo> readMemoryInfo(const std::string &path = "/proc/meminf
 std::optional<double> readThermalZone(const std::string &basePath = "/sys/class/thermal");
 double cpuUsagePercent(const CpuTimes &previous, const CpuTimes &current);
 std::optional<SystemStats> readSystemStats(const std::optional<CpuTimes> &previous);
+
+class SystemMonitorWorker final : public QObject {
+    Q_OBJECT
+
+public slots:
+    void start();
+
+signals:
+    void statsReady(const SystemStats &stats);
+    void finished();
+
+private slots:
+    void poll();
+
+private:
+    std::optional<CpuTimes> previousCpuTimes;
+    class QTimer *timer = nullptr;
+};

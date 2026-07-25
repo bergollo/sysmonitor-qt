@@ -1,40 +1,41 @@
 #include "systemmonitor.h"
 
 #include <QCoreApplication>
-#include <QTimer>
-
 #include <QDebug>
+#include <QThread>
+
+namespace {
+
+void printStats(const SystemStats &stats)
+{
+    qDebug().noquote()
+        << QString("CPU: %1% | Memory: %2/%3 MiB | Temperature: %4")
+               .arg(stats.cpuPercent, 0, 'f', 1)
+               .arg((stats.memory.totalKb - stats.memory.availableKb) / 1024)
+               .arg(stats.memory.totalKb / 1024)
+               .arg(stats.temperatureCelsius
+                        ? QString::number(*stats.temperatureCelsius, 'f', 1) + " C"
+                        : "unavailable");
+}
+
+}
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
-    std::optional<CpuTimes> previous;
-    int samples = 0;
 
-    QTimer timer;
-    QObject::connect(&timer, &QTimer::timeout, [&]() {
-        const auto stats = readSystemStats(previous);
-        if (!stats) {
-            qWarning() << "Unable to read system statistics";
-            app.quit();
-            return;
-        }
+    QThread workerThread;
+    SystemMonitorWorker worker;
+    worker.moveToThread(&workerThread);
 
-        previous = readCpuTimes();
-        qDebug().noquote()
-            << QString("CPU: %1% | Memory: %2/%3 MiB | Temperature: %4")
-                   .arg(stats->cpuPercent, 0, 'f', 1)
-                   .arg((stats->memory.totalKb - stats->memory.availableKb) / 1024)
-                   .arg(stats->memory.totalKb / 1024)
-                   .arg(stats->temperatureCelsius
-                            ? QString::number(*stats->temperatureCelsius, 'f', 1) + " C"
-                            : "unavailable");
+    QObject::connect(&workerThread, &QThread::started, &worker, &SystemMonitorWorker::start);
+    QObject::connect(&worker, &SystemMonitorWorker::statsReady, &printStats);
+    QObject::connect(&worker, &SystemMonitorWorker::finished, &app, &QCoreApplication::quit);
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, &workerThread, &QThread::quit);
 
-        if (++samples >= 3) {
-            app.quit();
-        }
-    });
-
-    timer.start(1000);
-    return app.exec();
+    workerThread.start();
+    const int result = app.exec();
+    workerThread.quit();
+    workerThread.wait();
+    return result;
 }
