@@ -1,0 +1,12 @@
+[Unit]
+Description=Qt System Monitor
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/QtSysMonitor
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=graphical-session.target
