@@ -5,12 +5,14 @@ project(HelloWorld VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core)
 
 qt_standard_project_setup()
 
 qt_add_executable(HelloWorld
     src/main.cpp
+    src/systemmonitor.cpp
+    src/systemmonitor.h
 )
 
-target_link_libraries(HelloWorld PRIVATE Qt6::Widgets)
+target_link_libraries(HelloWorld PRIVATE Qt6::Core)
