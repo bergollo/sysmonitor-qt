@@ -25,6 +25,8 @@ public:
     QVariantList cpuHistory() const;
 
 public slots:
+    // This slot is called through a queued connection on the GUI thread. It
+    // translates one immutable C++ snapshot into QML-observable properties.
     void updateStats(const SystemStats &stats);
 
 signals:

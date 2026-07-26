@@ -21,6 +21,8 @@ private slots:
     void poll();
 
 private:
+    // The worker has no parent: QObject ownership and thread affinity are
+    // separate, and moveToThread() cannot move an already parented object.
     std::optional<CpuTimes> previousCpuTimes;
     QTimer *timer = nullptr;
 };

@@ -6,6 +6,9 @@ namespace {
 
 std::uint64_t totalCpuTime(const CpuTimes &times)
 {
+    // These fields are monotonic kernel counters. Keeping the sum in an
+    // unsigned type mirrors the source format and makes underflow detectable
+    // when the newer snapshot is compared with the older one.
     return times.user + times.nice + times.system + times.idle + times.iowait
         + times.irq + times.softirq + times.steal;
 }

@@ -11,6 +11,8 @@
 
 int main(int argc, char *argv[])
 {
+    // QQuickWidget needs a scenegraph backend. Software rendering keeps the
+    // reference app usable on headless/forwarded displays without GLX.
     QQuickWindow::setGraphicsApi(QSGRendererInterface::Software);
     QApplication app(argc, argv);
 
@@ -18,6 +20,8 @@ int main(int argc, char *argv[])
     StatsViewModel statsModel;
     mainWindow.qmlView()->rootContext()->setContextProperty("statsModel", &statsModel);
     mainWindow.qmlView()->setSource(QUrl("qrc:/qml/Dashboard.qml"));
+    // QThread is the event-loop owner; the worker object does the actual work
+    // after moveToThread(), which keeps polling out of the GUI event loop.
     QThread workerThread;
     SystemMonitorWorker worker;
     worker.moveToThread(&workerThread);

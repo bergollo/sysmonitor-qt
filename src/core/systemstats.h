@@ -25,4 +25,11 @@ struct SystemStats {
     std::optional<double> temperatureCelsius;
 };
 
+/**
+ * Calculates utilization from two cumulative /proc/stat snapshots.
+ *
+ * The kernel counters are totals since boot, so either snapshot alone is not
+ * a percentage. We compare deltas and treat backwards or impossible counters
+ * as an invalid sample instead of exposing a misleading value to the UI.
+ */
 double cpuUsagePercent(const CpuTimes &previous, const CpuTimes &current);

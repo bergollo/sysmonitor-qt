@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
     , chartView(new QChartView)
     , qmlDashboard(new QQuickWidget)
 {
+    // Passing this window as the parent of the central widget is what lets
+    // Qt's QObject/widget ownership tree clean up the UI automatically.
     setWindowTitle("System Monitor");
     resize(720, 520);
 
@@ -72,6 +74,8 @@ QQuickWidget *MainWindow::qmlView() const
 
 void MainWindow::updateStats(const SystemStats &stats)
 {
+    // QWidget APIs must only be touched from the GUI thread. The worker emits
+    // statsReady across the thread boundary; Qt queues this slot accordingly.
     const auto usedMemoryKb = stats.memory.totalKb - stats.memory.availableKb;
     const auto memoryPercent = 100.0 * static_cast<double>(usedMemoryKb)
         / static_cast<double>(stats.memory.totalKb);

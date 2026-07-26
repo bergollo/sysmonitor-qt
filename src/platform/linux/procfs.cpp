@@ -6,6 +6,8 @@
 
 std::optional<CpuTimes> readCpuTimes(const std::string &path)
 {
+    // A path parameter makes the parser deterministic in tests while the
+    // default remains the real Linux file for production use.
     std::ifstream input(path);
     std::string line;
     if (!input || !std::getline(input, line)) {
@@ -50,6 +52,8 @@ std::optional<MemoryInfo> readMemoryInfo(const std::string &path)
 
 std::optional<double> readThermalZone(const std::string &basePath)
 {
+    // std::error_code avoids throwing for a missing board-specific thermal
+    // directory; an unavailable sensor is a valid runtime state.
     std::error_code error;
     for (const auto &entry : std::filesystem::directory_iterator(basePath, error)) {
         if (error || !entry.is_directory()) {
