@@ -1,6 +1,6 @@
-#include "mainwindow.h"
-#include "statsviewmodel.h"
-#include "systemmonitor.h"
+#include "core/systemmonitorworker.h"
+#include "ui/mainwindow.h"
+#include "ui/statsviewmodel.h"
 
 #include <QApplication>
 #include <QQmlContext>
@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     MainWindow mainWindow;
     StatsViewModel statsModel;
     mainWindow.qmlView()->rootContext()->setContextProperty("statsModel", &statsModel);
-    mainWindow.qmlView()->setSource(QUrl("qrc:/qml/qml/Dashboard.qml"));
+    mainWindow.qmlView()->setSource(QUrl("qrc:/qml/Dashboard.qml"));
     QThread workerThread;
     SystemMonitorWorker worker;
     worker.moveToThread(&workerThread);

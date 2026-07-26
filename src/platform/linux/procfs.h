@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../core/systemstats.h"
+#include "core/systemstats.h"
 
 #include <optional>
 #include <string>

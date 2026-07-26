@@ -1,6 +1,6 @@
-#include "systemmonitorworker.h"
+#include "core/systemmonitorworker.h"
 
-#include "../platform/procfs.h"
+#include "platform/linux/procfs.h"
 
 #include <QTimer>
 

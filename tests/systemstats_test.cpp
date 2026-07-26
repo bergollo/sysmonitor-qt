@@ -1,5 +1,5 @@
-#include "../src/core/systemstats.h"
-#include "../src/platform/procfs.h"
+#include "core/systemstats.h"
+#include "platform/linux/procfs.h"
 
 #include <QTemporaryDir>
 #include <QTest>

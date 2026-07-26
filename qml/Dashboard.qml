@@ -1,4 +1,5 @@
 import QtQuick
+import "components"
 
 Rectangle {
     color: "#20242b"
@@ -20,77 +21,27 @@ Rectangle {
             color: "#aeb6c2"
         }
 
-        Rectangle {
+        StatCard {
             width: parent.width
-            height: 110
-            radius: 8
-            color: "#2b313b"
-
-            Column {
-                anchors.fill: parent
-                anchors.margins: 16
-                spacing: 8
-
-                Text {
-                    text: "CPU  " + statsModel.cpuPercent.toFixed(1) + "%"
-                    color: "#f2f4f8"
-                    font.pixelSize: 20
-                }
-
-                Rectangle {
-                    width: parent.width
-                    height: 12
-                    radius: 6
-                    color: "#15181d"
-
-                    Rectangle {
-                        width: parent.width * statsModel.cpuPercent / 100
-                        height: parent.height
-                        radius: parent.radius
-                        color: "#54b8ff"
-                    }
-                }
-            }
+            title: "CPU"
+            valueText: statsModel.cpuPercent.toFixed(1) + "%"
+            barValue: statsModel.cpuPercent / 100
+            barColor: "#54b8ff"
         }
 
-        Rectangle {
+        StatCard {
             width: parent.width
-            height: 110
-            radius: 8
-            color: "#2b313b"
-
-            Column {
-                anchors.fill: parent
-                anchors.margins: 16
-                spacing: 8
-
-                Text {
-                    text: "Memory  " + statsModel.memoryUsedMb + " / "
-                          + statsModel.memoryTotalMb + " MiB"
-                    color: "#f2f4f8"
-                    font.pixelSize: 20
-                }
-
-                Rectangle {
-                    width: parent.width
-                    height: 12
-                    radius: 6
-                    color: "#15181d"
-
-                    Rectangle {
-                        width: parent.width * statsModel.memoryPercent / 100
-                        height: parent.height
-                        radius: parent.radius
-                        color: "#9b8cff"
-                    }
-                }
-            }
+            title: "Memory"
+            valueText: statsModel.memoryUsedMb + " / " + statsModel.memoryTotalMb + " MiB"
+            barValue: statsModel.memoryPercent / 100
+            barColor: "#9b8cff"
         }
 
-        Text {
-            text: "Temperature  " + statsModel.temperature
-            color: "#f2f4f8"
-            font.pixelSize: 20
+        StatCard {
+            width: parent.width
+            title: "Temperature"
+            valueText: statsModel.temperature
+            barValue: -1
         }
 
         Text {

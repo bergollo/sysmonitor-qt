@@ -1,6 +1,6 @@
-#include "mainwindow.h"
+#include "ui/mainwindow.h"
 
-#include "systemmonitor.h"
+#include "core/systemstats.h"
 
 #include <QGridLayout>
 #include <QGroupBox>

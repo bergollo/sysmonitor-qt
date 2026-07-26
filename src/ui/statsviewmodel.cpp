@@ -1,6 +1,6 @@
-#include "statsviewmodel.h"
+#include "ui/statsviewmodel.h"
 
-#include "systemmonitor.h"
+#include "core/systemstats.h"
 
 #include <QVariant>
 
