@@ -1,4 +1,5 @@
 #include "core/systemmonitorworker.h"
+#include "core/monitorconstants.h"
 
 #include "platform/linux/procfs.h"
 
@@ -9,7 +10,7 @@ void SystemMonitorWorker::start()
     // This slot runs after QThread::started, so the timer is constructed in
     // the worker thread and its timeout events are delivered there as well.
     timer = new QTimer(this);
-    timer->setInterval(1000);
+    timer->setInterval(monitor::PollIntervalMs);
     connect(timer, &QTimer::timeout, this, &SystemMonitorWorker::poll);
     timer->start();
     poll();

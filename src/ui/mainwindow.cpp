@@ -1,5 +1,6 @@
 #include "ui/mainwindow.h"
 
+#include "core/monitorconstants.h"
 #include "core/systemstats.h"
 
 #include <QGridLayout>
@@ -48,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
     chart->setTitle("CPU usage history");
     auto *axisX = new QValueAxis;
     auto *axisY = new QValueAxis;
-    axisX->setRange(0, 60);
+    axisX->setRange(0, static_cast<qreal>(monitor::MaxCpuHistorySamples));
     axisY->setRange(0, 100);
     chart->addAxis(axisX, Qt::AlignBottom);
     chart->addAxis(axisY, Qt::AlignLeft);
@@ -96,11 +97,13 @@ void MainWindow::updateStats(const SystemStats &stats)
                                   : "Temperature: unavailable");
 
     cpuSeries->append(sampleIndex++, stats.cpuPercent);
-    if (cpuSeries->count() > 60) {
+    if (cpuSeries->count() > static_cast<qsizetype>(monitor::MaxCpuHistorySamples)) {
         cpuSeries->remove(0);
     }
     const auto axes = chartView->chart()->axes(Qt::Horizontal);
     if (!axes.isEmpty()) {
-        axes.first()->setRange(qMax(0, sampleIndex - 60), qMax(60, sampleIndex));
+        const auto historyLimit = static_cast<int>(monitor::MaxCpuHistorySamples);
+        axes.first()->setRange(qMax(0, sampleIndex - historyLimit),
+                               qMax(historyLimit, sampleIndex));
     }
 }

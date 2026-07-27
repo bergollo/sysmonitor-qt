@@ -16,6 +16,13 @@ predict the failure mode, then implement and test the smallest change.
 - Explain when a C++20 concept would clarify a generic API and when it would be noise.
 - Compare `std::jthread` cancellation with the existing Qt `QThread` event-loop model.
 - Use `consteval` or `static_assert` for a compile-time configuration invariant.
+- Add a diagnostic message to a `[[nodiscard]]` parser result and inspect the
+  compiler warning when a caller ignores it.
+- Decide whether a missing thermal zone is suitable for `[[unlikely]]`, and
+  explain why the current code does or does not use the hint.
+- Add a `FINAL` Q_PROPERTY and inspect its Qt meta-object behavior.
+- Compare `constexpr`, `consteval`, and `constinit` with one small example of
+  each, then remove any example that does not improve the design.
 
 ## Qt
 

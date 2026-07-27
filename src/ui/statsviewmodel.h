@@ -7,12 +7,12 @@ struct SystemStats;
 
 class StatsViewModel final : public QObject {
     Q_OBJECT
-    Q_PROPERTY(double cpuPercent READ cpuPercent NOTIFY statsChanged)
-    Q_PROPERTY(double memoryPercent READ memoryPercent NOTIFY statsChanged)
-    Q_PROPERTY(int memoryUsedMb READ memoryUsedMb NOTIFY statsChanged)
-    Q_PROPERTY(int memoryTotalMb READ memoryTotalMb NOTIFY statsChanged)
-    Q_PROPERTY(QString temperature READ temperature NOTIFY statsChanged)
-    Q_PROPERTY(QVariantList cpuHistory READ cpuHistory NOTIFY statsChanged)
+    Q_PROPERTY(double cpuPercent READ cpuPercent NOTIFY statsChanged FINAL)
+    Q_PROPERTY(double memoryPercent READ memoryPercent NOTIFY statsChanged FINAL)
+    Q_PROPERTY(int memoryUsedMb READ memoryUsedMb NOTIFY statsChanged FINAL)
+    Q_PROPERTY(int memoryTotalMb READ memoryTotalMb NOTIFY statsChanged FINAL)
+    Q_PROPERTY(QString temperature READ temperature NOTIFY statsChanged FINAL)
+    Q_PROPERTY(QVariantList cpuHistory READ cpuHistory NOTIFY statsChanged FINAL)
 
 public:
     explicit StatsViewModel(QObject *parent = nullptr);

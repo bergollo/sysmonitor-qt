@@ -18,6 +18,7 @@ qt_standard_project_setup()
 add_library(QtSysMonitorCore STATIC
     src/core/systemstats.cpp
     src/core/systemstats.h
+    src/core/monitorconstants.h
     src/core/systemmonitorworker.cpp
     src/core/systemmonitorworker.h
     src/platform/linux/procfs.cpp

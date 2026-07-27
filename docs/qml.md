@@ -38,3 +38,15 @@ qrc:/qml/Dashboard.qml
 uses software rendering to avoid GLX crashes on forwarded/headless displays.
 X11 forwarding may still produce washed-out compositing; use VNC or a local
 display for visual QML QA. Offscreen execution is for functional smoke tests.
+
+## Qt Properties and C++ Attributes
+
+`Q_PROPERTY` is processed by Qt's meta-object tooling and is what makes
+`StatsViewModel` visible to QML. `NOTIFY statsChanged` invalidates dependent
+bindings. `FINAL` prevents derived Qt meta-object types from overriding the
+property. `CONSTANT` would be incorrect for live metrics, and `REQUIRED` is not
+needed because the view-model is supplied as a context property.
+
+These are separate from standard C++20 attributes such as `[[nodiscard]]`.
+Changing a C++ attribute cannot repair a missing QML property notification, and
+changing a QML property declaration cannot alter compiler diagnostics.

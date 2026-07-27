@@ -1,4 +1,5 @@
 #include "ui/statsviewmodel.h"
+#include "core/systemstats.h"
 
 #include <QApplication>
 #include <QColor>
@@ -7,6 +8,7 @@
 #include <QQuickItem>
 #include <QQuickWidget>
 #include <QQuickWindow>
+#include <QSignalSpy>
 #include <QTest>
 #include <QUrl>
 
@@ -15,6 +17,7 @@ class QmlRenderingTest final : public QObject {
 
 private slots:
     void loadsDashboardAndCards();
+    void updatesViewModelProperties();
 };
 
 void QmlRenderingTest::loadsDashboardAndCards()
@@ -56,6 +59,26 @@ void QmlRenderingTest::loadsDashboardAndCards()
     }
     QCOMPARE(cardCount, 3);
     QVERIFY(foundCpuCard);
+}
+
+void QmlRenderingTest::updatesViewModelProperties()
+{
+    StatsViewModel statsModel;
+    QSignalSpy statsChanged(&statsModel, &StatsViewModel::statsChanged);
+    const SystemStats stats{
+        .cpuPercent = 42.5,
+        .memory = MemoryInfo{.totalKb = 4096000, .availableKb = 2048000},
+        .temperatureCelsius = 55.0,
+    };
+
+    statsModel.updateStats(stats);
+
+    QCOMPARE(statsChanged.count(), 1);
+    QCOMPARE(statsModel.cpuPercent(), 42.5);
+    QCOMPARE(statsModel.memoryPercent(), 50.0);
+    QCOMPARE(statsModel.memoryUsedMb(), 2000);
+    QCOMPARE(statsModel.temperature(), QString("55.0 C"));
+    QCOMPARE(statsModel.cpuHistory().size(), 1);
 }
 
 int main(int argc, char *argv[])

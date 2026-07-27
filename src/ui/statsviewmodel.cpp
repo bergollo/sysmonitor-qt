@@ -1,5 +1,6 @@
 #include "ui/statsviewmodel.h"
 
+#include "core/monitorconstants.h"
 #include "core/systemstats.h"
 
 #include <QVariant>
@@ -52,7 +53,7 @@ void StatsViewModel::updateStats(const SystemStats &stats)
         : "unavailable";
 
     m_cpuHistory.append(m_cpuPercent);
-    if (m_cpuHistory.size() > 60) {
+    if (m_cpuHistory.size() > static_cast<qsizetype>(monitor::MaxCpuHistorySamples)) {
         m_cpuHistory.removeFirst();
     }
     emit statsChanged();

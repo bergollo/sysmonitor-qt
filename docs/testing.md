@@ -28,3 +28,9 @@ ctest --test-dir build --output-on-failure
 
 Do not make parser unit tests depend on Widgets. A test that needs a GUI event
 loop is testing a different boundary and belongs in a separate target.
+
+Compiler attributes are verified at compile time rather than with runtime
+assertions. Runtime tests should instead verify the behavior the attribute
+protects: parser callers handle `std::optional`, and view-model updates emit
+`statsChanged` and expose the expected property values. The QML rendering test
+covers both resource loading and the property-binding boundary.

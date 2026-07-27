@@ -5,15 +5,16 @@ foundation, but a long gap since day-to-day C++. Read the documents in this
 order:
 
 1. [C++11, C++17, and C++20 comparison](cpp11-17-20.md)
-2. [Modern C++](cpp-modernization.md)
-3. [Qt Core and threading](qt-core.md)
-4. [Widgets](qt-widgets.md)
-5. [QML](qml.md)
-6. [CMake](cmake.md)
-7. [Testing](testing.md)
-8. [Architecture](architecture.md)
-9. [Exercises](exercises.md)
-10. [Deployment](deployment.md)
+2. [C++20 attributes and compile-time properties](cpp20-attributes.md)
+3. [Modern C++](cpp-modernization.md)
+4. [Qt Core and threading](qt-core.md)
+5. [Widgets](qt-widgets.md)
+6. [QML](qml.md)
+7. [CMake](cmake.md)
+8. [Testing](testing.md)
+9. [Architecture](architecture.md)
+10. [Exercises](exercises.md)
+11. [Deployment](deployment.md)
 
 Use the source as the worked example. `src/core/` is the best starting point
 for plain C++, `src/platform/linux/` shows boundary code, and `src/ui/` shows

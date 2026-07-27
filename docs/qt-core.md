@@ -58,3 +58,10 @@ operations and bypass normal cleanup.
 
 `QCoreApplication` is enough for non-GUI programs. This application uses
 `QApplication` because Widgets and `QQuickWidget` need GUI initialization.
+
+## C++20 Does Not Replace Qt Core
+
+`Q_OBJECT`, signals, slots, and thread affinity are Qt meta-object features,
+not standard C++ attributes. The C++20 language upgrade complements them: value
+types, `constexpr` policy, and `[[nodiscard]]` improve the boundary, while Qt
+still owns the event loop and queued delivery.

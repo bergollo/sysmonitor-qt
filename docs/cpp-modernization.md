@@ -101,3 +101,24 @@ improving this Qt event-driven design.
 - C++20 library availability depends on the compiler and standard library, not
   only the compiler front-end version.
 - Cross-compilers and target sysroots must support the same selected features.
+
+## Attributes as API Contracts
+
+The parser APIs use diagnostic `[[nodiscard("...")]]` messages because an
+ignored parse result is almost always a bug. Attributes are a precise addition
+to an API contract, but they do not replace validation, tests, or ownership
+design. The full attribute policy is in [C++20 attributes](cpp20-attributes.md).
+
+## Compile-Time Policy
+
+Polling and history limits live in `core/monitorconstants.h` as `inline
+constexpr` values with `static_assert` checks. This removes duplicated magic
+numbers and makes invalid configuration fail at compile time. The constants
+are still ordinary readable policy; using `consteval` would add no value here.
+
+## Qt Properties Are Different
+
+`Q_PROPERTY` is Qt metadata, not a C++20 property language feature. `READ`,
+`NOTIFY`, and `FINAL` control Qt/QML integration, while attributes such as
+`[[nodiscard]]` control compiler diagnostics. Keeping the two systems distinct
+prevents confusing a QML binding problem with a C++ type or attribute problem.

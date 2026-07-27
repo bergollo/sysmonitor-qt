@@ -34,4 +34,5 @@ struct SystemStats {
  * a percentage. We compare deltas and treat backwards or impossible counters
  * as an invalid sample instead of exposing a misleading value to the UI.
  */
-[[nodiscard]] double cpuUsagePercent(const CpuTimes &previous, const CpuTimes &current);
+[[nodiscard("CPU utilization is invalid if the result is ignored")]]
+double cpuUsagePercent(const CpuTimes &previous, const CpuTimes &current);

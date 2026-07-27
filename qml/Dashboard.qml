@@ -24,28 +24,30 @@ Rectangle {
         StatCard {
             width: parent.width
             title: "CPU"
-            valueText: statsModel.cpuPercent.toFixed(1) + "%"
-            barValue: statsModel.cpuPercent / 100
+            valueText: statsModel ? statsModel.cpuPercent.toFixed(1) + "%" : "waiting"
+            barValue: statsModel ? statsModel.cpuPercent / 100 : -1
             barColor: "#54b8ff"
         }
 
         StatCard {
             width: parent.width
             title: "Memory"
-            valueText: statsModel.memoryUsedMb + " / " + statsModel.memoryTotalMb + " MiB"
-            barValue: statsModel.memoryPercent / 100
+            valueText: statsModel
+                ? statsModel.memoryUsedMb + " / " + statsModel.memoryTotalMb + " MiB"
+                : "waiting"
+            barValue: statsModel ? statsModel.memoryPercent / 100 : -1
             barColor: "#9b8cff"
         }
 
         StatCard {
             width: parent.width
             title: "Temperature"
-            valueText: statsModel.temperature
+            valueText: statsModel ? statsModel.temperature : "waiting"
             barValue: -1
         }
 
         Text {
-            text: "CPU samples: " + statsModel.cpuHistory.length
+            text: "CPU samples: " + (statsModel ? statsModel.cpuHistory.length : 0)
             color: "#aeb6c2"
         }
     }
