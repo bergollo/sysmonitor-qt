@@ -15,6 +15,7 @@ private slots:
     void parsesThermalZone();
     void calculatesCpuDelta();
     void rejectsMalformedInput();
+    void comparesValueSnapshots();
 };
 
 void SystemStatsTest::parsesCpuTimes()
@@ -58,8 +59,16 @@ void SystemStatsTest::parsesThermalZone()
 
 void SystemStatsTest::calculatesCpuDelta()
 {
-    const CpuTimes previous{100, 0, 100, 700, 0, 0, 0, 0};
-    const CpuTimes current{120, 0, 120, 740, 0, 0, 0, 0};
+    const CpuTimes previous{
+        .user = 100,
+        .system = 100,
+        .idle = 700,
+    };
+    const CpuTimes current{
+        .user = 120,
+        .system = 120,
+        .idle = 740,
+    };
     QCOMPARE(cpuUsagePercent(previous, current), 50.0);
 }
 
@@ -69,6 +78,22 @@ void SystemStatsTest::rejectsMalformedInput()
     const auto path = directory.filePath("stat");
     std::ofstream(path.toStdString()) << "not-cpu 1 2 3\n";
     QVERIFY(!readCpuTimes(path.toStdString()).has_value());
+}
+
+void SystemStatsTest::comparesValueSnapshots()
+{
+    const CpuTimes actual{
+        .user = 10,
+        .nice = 20,
+        .system = 30,
+        .idle = 40,
+        .iowait = 5,
+        .irq = 6,
+        .softirq = 7,
+        .steal = 8,
+    };
+    const CpuTimes expected{10, 20, 30, 40, 5, 6, 7, 8};
+    QVERIFY(actual == expected);
 }
 
 QTEST_MAIN(SystemStatsTest)

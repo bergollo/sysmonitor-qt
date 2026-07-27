@@ -6,9 +6,10 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QProgressBar>
+#include <QQuickWidget>
+#include <QSizePolicy>
 #include <QTabWidget>
 #include <QVBoxLayout>
-#include <QQuickWidget>
 
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
@@ -55,6 +56,9 @@ MainWindow::MainWindow(QWidget *parent)
     cpuSeries->attachAxis(axisY);
     chartView->setChart(chart);
     chartView->setMinimumHeight(260);
+
+    qmlDashboard->setResizeMode(QQuickWidget::SizeRootObjectToView);
+    qmlDashboard->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     auto *widgetsPage = new QWidget;
     auto *layout = new QVBoxLayout(widgetsPage);

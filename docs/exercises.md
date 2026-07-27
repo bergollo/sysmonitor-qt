@@ -10,6 +10,12 @@ predict the failure mode, then implement and test the smallest change.
 - Add tests for decreasing counters and zero elapsed time.
 - Compare `std::optional` with a result type carrying an error message.
 - Explain why `std::move` would be unnecessary for `SystemStats` here.
+- Convert a parser result to a `[[nodiscard]]` API and test ignored-result warnings.
+- Add a `std::span<const double>` helper over a CPU-history container.
+- Compare the current iterator-based parsing with a ranges-based alternative.
+- Explain when a C++20 concept would clarify a generic API and when it would be noise.
+- Compare `std::jthread` cancellation with the existing Qt `QThread` event-loop model.
+- Use `consteval` or `static_assert` for a compile-time configuration invariant.
 
 ## Qt
 

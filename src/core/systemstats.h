@@ -12,6 +12,8 @@ struct CpuTimes {
     std::uint64_t irq = 0;
     std::uint64_t softirq = 0;
     std::uint64_t steal = 0;
+
+    bool operator==(const CpuTimes &) const = default;
 };
 
 struct MemoryInfo {
@@ -32,4 +34,4 @@ struct SystemStats {
  * a percentage. We compare deltas and treat backwards or impossible counters
  * as an invalid sample instead of exposing a misleading value to the UI.
  */
-double cpuUsagePercent(const CpuTimes &previous, const CpuTimes &current);
+[[nodiscard]] double cpuUsagePercent(const CpuTimes &previous, const CpuTimes &current);

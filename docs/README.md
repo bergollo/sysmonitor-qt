@@ -4,15 +4,16 @@ This project assumes a solid software-engineering background and a C++11
 foundation, but a long gap since day-to-day C++. Read the documents in this
 order:
 
-1. [Modern C++](cpp-modernization.md)
-2. [Qt Core and threading](qt-core.md)
-3. [Widgets](qt-widgets.md)
-4. [QML](qml.md)
-5. [CMake](cmake.md)
-6. [Testing](testing.md)
-7. [Architecture](architecture.md)
-8. [Exercises](exercises.md)
-9. [Deployment](deployment.md)
+1. [C++11, C++17, and C++20 comparison](cpp11-17-20.md)
+2. [Modern C++](cpp-modernization.md)
+3. [Qt Core and threading](qt-core.md)
+4. [Widgets](qt-widgets.md)
+5. [QML](qml.md)
+6. [CMake](cmake.md)
+7. [Testing](testing.md)
+8. [Architecture](architecture.md)
+9. [Exercises](exercises.md)
+10. [Deployment](deployment.md)
 
 Use the source as the worked example. `src/core/` is the best starting point
 for plain C++, `src/platform/linux/` shows boundary code, and `src/ui/` shows
@@ -30,6 +31,35 @@ QT_QPA_PLATFORM=offscreen ./build/QtSysMonitor
 The first three commands validate code and tests. The last command validates
 startup and signal flow without requiring a display; use VNC or a local
 display for QML visual checks.
+
+## C++20 Verification
+
+The project requires a compiler with C++20 support. Verify the selected standard
+in the generated compile database:
+
+```bash
+cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+grep -R -- '-std=c++20' build/compile_commands.json
+```
+
+After changing the language standard, a fresh build directory is a useful
+diagnostic if a compiler or toolchain appears cached incorrectly:
+
+```bash
+cmake -S . -B build
+cmake --build build --parallel
+ctest --test-dir build --output-on-failure
+```
+
+Format C++ sources with the repository's `.clang-format` configuration:
+
+```bash
+clang-format -i \
+  src/main.cpp src/core/*.cpp src/core/*.h \
+  src/platform/linux/*.cpp src/platform/linux/*.h \
+  src/ui/*.cpp src/ui/*.h tests/*.cpp
+git diff --check
+```
 
 ## Before Changing Code
 

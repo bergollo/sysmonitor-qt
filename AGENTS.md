@@ -2,14 +2,14 @@
 
 ## Project Overview
 
-QtSysMonitor is a Qt 6 (C++17) reference/teaching app that shows the same live CPU/memory/temperature
+QtSysMonitor is a Qt 6 (C++20) reference/teaching app that shows the same live CPU/memory/temperature
 data in two UIs — QtWidgets and QML — driven by one `SystemMonitorWorker` on a background `QThread`.
 Requires CMake ≥ 3.16 and Qt 6 (Core, Widgets, Charts, Quick, QuickWidgets, Test); targets Ubuntu/Linux
 natively, with an optional ARM64 cross-build via `cmake/toolchains/aarch64-linux-gnu.cmake`.
 
 ## Tech Stack
 
-- **Language:** C++17, QML
+- **Language:** C++20, QML
 - **Framework:** Qt 6 — Core, Widgets, Charts, Quick, QuickWidgets, Test
 - **Build:** CMake ≥ 3.16 (three targets: `QtSysMonitorCore` static lib, `QtSysMonitor` executable, `SystemStatsTests`)
 - **Platform:** Linux (`/proc`, `/sys/class/thermal`); ARM64 cross-compile supported, not primary
