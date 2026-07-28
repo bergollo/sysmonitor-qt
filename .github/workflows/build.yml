@@ -12,7 +12,7 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y cmake ninja-build qt6-base-dev qt6-charts-dev qt6-declarative-dev
       - name: Configure
-        run: cmake -S . -B build -G Ninja
+        run: cmake -S . -B build -G Ninja -DSYSMONITOR_FETCH_TEST_DEPS=ON
       - name: Build
         run: cmake --build build --parallel
       - name: Test

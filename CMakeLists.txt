@@ -59,16 +59,34 @@ enable_project_warnings(QtSysMonitor)
 
 enable_testing()
 
-qt_add_executable(SystemStatsTests
-    tests/systemstats_test.cpp
+include(FetchContent)
+
+option(SYSMONITOR_FETCH_TEST_DEPS "Download pinned test dependencies when unavailable" ON)
+
+find_package(GTest CONFIG QUIET)
+
+if(NOT GTest_FOUND AND SYSMONITOR_FETCH_TEST_DEPS)
+    FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG 52eb8108c5bdec04579160ae17225d66034bd723 # v1.17.0
+    )
+    FetchContent_MakeAvailable(googletest)
+elseif(NOT GTest_FOUND)
+    find_package(GTest CONFIG REQUIRED)
+endif()
+
+add_executable(SystemStatsGTests
+    tests/systemstats_gtest.cpp
 )
 
-target_link_libraries(SystemStatsTests PRIVATE Qt6::Core Qt6::Test QtSysMonitorCore)
-target_include_directories(SystemStatsTests PRIVATE src)
-target_compile_features(SystemStatsTests PRIVATE cxx_std_20)
-enable_project_warnings(SystemStatsTests)
+target_link_libraries(SystemStatsGTests PRIVATE GTest::gtest_main QtSysMonitorCore)
+target_include_directories(SystemStatsGTests PRIVATE src)
+target_compile_features(SystemStatsGTests PRIVATE cxx_std_20)
+enable_project_warnings(SystemStatsGTests)
 
-add_test(NAME SystemStatsTests COMMAND SystemStatsTests)
+include(GoogleTest)
+gtest_discover_tests(SystemStatsGTests PROPERTIES LABELS "unit")
 
 qt_add_executable(QmlRenderingTests
     tests/qml_rendering_test.cpp
@@ -98,7 +116,20 @@ enable_project_warnings(QmlRenderingTests)
 add_test(NAME QmlRenderingTests COMMAND QmlRenderingTests)
 set_tests_properties(QmlRenderingTests PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
+    LABELS "integration;qml;headless"
 )
+
+qt_add_executable(SystemMonitorWorkerTests
+    tests/systemmonitorworker_test.cpp
+)
+
+target_include_directories(SystemMonitorWorkerTests PRIVATE src)
+target_compile_features(SystemMonitorWorkerTests PRIVATE cxx_std_20)
+target_link_libraries(SystemMonitorWorkerTests PRIVATE Qt6::Core Qt6::Test QtSysMonitorCore)
+enable_project_warnings(SystemMonitorWorkerTests)
+
+add_test(NAME SystemMonitorWorkerTests COMMAND SystemMonitorWorkerTests)
+set_tests_properties(SystemMonitorWorkerTests PROPERTIES LABELS "integration;headless")
 
 install(TARGETS QtSysMonitor
     RUNTIME DESTINATION bin

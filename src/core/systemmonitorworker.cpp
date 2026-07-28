@@ -1,9 +1,15 @@
 #include "core/systemmonitorworker.h"
 #include "core/monitorconstants.h"
 
-#include "platform/linux/procfs.h"
-
 #include <QTimer>
+
+#include <utility>
+
+SystemMonitorWorker::SystemMonitorWorker(
+    std::function<std::optional<SystemStats>()> reader)
+    : reader(std::move(reader))
+{
+}
 
 void SystemMonitorWorker::start()
 {
@@ -18,7 +24,7 @@ void SystemMonitorWorker::start()
 
 void SystemMonitorWorker::poll()
 {
-    const auto stats = readSystemStats(previousCpuTimes);
+    const auto stats = reader();
     if (!stats) {
         emit finished();
         return;
@@ -26,6 +32,5 @@ void SystemMonitorWorker::poll()
 
     // Signals carry a value snapshot. The GUI never reads mutable worker
     // state directly, so queued delivery does not require a shared mutex.
-    previousCpuTimes = readCpuTimes();
     emit statsReady(*stats);
 }

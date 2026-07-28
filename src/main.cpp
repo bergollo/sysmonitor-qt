@@ -1,4 +1,5 @@
 #include "core/systemmonitorworker.h"
+#include "platform/linux/procfs.h"
 #include "ui/mainwindow.h"
 #include "ui/statsviewmodel.h"
 
@@ -35,7 +36,12 @@ int main(int argc, char *argv[])
     // QThread is the event-loop owner; the worker object does the actual work
     // after moveToThread(), which keeps polling out of the GUI event loop.
     QThread workerThread;
-    SystemMonitorWorker worker;
+    std::optional<CpuTimes> previousCpuTimes;
+    SystemMonitorWorker worker([&previousCpuTimes] {
+        const auto stats = readSystemStats(previousCpuTimes);
+        previousCpuTimes = readCpuTimes();
+        return stats;
+    });
     worker.moveToThread(&workerThread);
 
     QObject::connect(&workerThread, &QThread::started, &worker, &SystemMonitorWorker::start);

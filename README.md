@@ -30,7 +30,9 @@ qt-sysmonitor/
 │   └── components/
 │       └── StatCard.qml            # extracted reusable stat card
 ├── tests/
-│   └── systemstats_test.cpp        # exercises core/ + platform/, no display
+│   ├── systemstats_gtest.cpp       # GoogleTest unit tests, no display
+│   ├── systemmonitorworker_test.cpp # QtTest worker integration tests
+│   └── qml_rendering_test.cpp      # QtTest/QML integration tests
 ├── docs/architecture.md            # layering, threading model, known limitations
 ├── scripts/deploy_arm64.sh
 └── packaging/qt-sysmonitor.service
@@ -48,7 +50,8 @@ cmake --build build --parallel
 ./build/QtSysMonitor
 ```
 
-Run the unit tests (pure `core`/`platform` logic, no display required):
+Run all tests through CTest. GoogleTest covers pure C++ and parser behavior;
+QtTest covers QObject, event-loop, and QML behavior:
 
 ```bash
 ctest --test-dir build --output-on-failure

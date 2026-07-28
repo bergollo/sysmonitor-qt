@@ -10,14 +10,14 @@ natively, with an optional ARM64 cross-build via `cmake/toolchains/aarch64-linux
 ## Tech Stack
 
 - **Language:** C++20, QML
-- **Framework:** Qt 6 — Core, Widgets, Charts, Quick, QuickWidgets, Test
-- **Build:** CMake ≥ 3.16 (three targets: `QtSysMonitorCore` static lib, `QtSysMonitor` executable, `SystemStatsTests`)
+- **Framework:** Qt 6 — Core, Widgets, Charts, Quick, QuickWidgets, Test; GoogleTest 1.17.0 for C++ unit tests
+- **Build:** CMake ≥ 3.16 (targets: `QtSysMonitorCore`, `QtSysMonitor`, `SystemStatsGTests`, `SystemMonitorWorkerTests`, `QmlRenderingTests`)
 - **Platform:** Linux (`/proc`, `/sys/class/thermal`); ARM64 cross-compile supported, not primary
 
 ## Commands
 
 ```bash
-# Install deps (Ubuntu)
+# Install deps (Ubuntu; GoogleTest is fetched if no system package is present)
 sudo apt install cmake build-essential qt6-base-dev qt6-charts-dev qt6-declarative-dev
 
 # Configure + build
@@ -47,7 +47,7 @@ fix, not something to suppress.
 | `src/platform/linux/` | `procfs.*` — the *only* code allowed to read `/proc` or `/sys/class/thermal`. |
 | `src/ui/` | `mainwindow.*` (Widgets), `statsviewmodel.*` (QML view-model). Both consume `core/`, never `platform/` directly. |
 | `qml/` | `Dashboard.qml` + `components/` (e.g. `StatCard.qml`). |
-| `tests/` | `systemstats_test.cpp` — exercises `QtSysMonitorCore` only, no display needed. |
+| `tests/` | GoogleTest unit tests plus QtTest worker and QML integration tests. |
 | `cmake/` | `CompilerWarnings.cmake`, `toolchains/aarch64-linux-gnu.cmake`. |
 | `docs/` | Deeper docs — see Pointers below. |
 
@@ -102,7 +102,8 @@ StatCard { ... }
 - **`QQuickWindow::setGraphicsApi(QSGRendererInterface::Software)` in `main.cpp` is intentional**, not a leftover debug flag — it's what keeps the app usable headless/over X11 forwarding. Don't remove it without checking `docs/qml.md` and `docs/architecture.md` first. Note X11-forwarded `QQuickWidget` content can still look washed out even with this set — that's a known display-path limitation (use VNC/local display to visually verify QML), not a code bug to "fix."
 - **Don't add `QtQuick.Controls` types (`Label`, etc.) to QML** without also adding the Controls style plugin package — this breaks the build with `<Type> is not a type` on machines that only have the base Quick modules. `Dashboard.qml` deliberately uses plain `Text`/`Rectangle` for this reason.
 - **Native and ARM64 builds must use separate build directories** (`build/` vs `build-aarch64/` or similar) — never reconfigure the native cache with the cross-toolchain file.
-- **`SystemStatsTests` links `QtSysMonitorCore`** — do not add duplicate copies of `core/`/`platform/` sources directly to the test target.
+- **`SystemStatsGTests` links `QtSysMonitorCore`** — do not add duplicate copies of `core/`/`platform/` sources directly to test targets.
+- **Use GoogleTest for pure C++ and QtTest for Qt/QML integration.** Do not introduce a second general-purpose test framework without updating the testing architecture.
 - **Generated files are off-limits:** anything under `build*/`, `moc_*.cpp`, `moc_*.h`, `qrc_*.cpp`, `ui_*.h`, `CMakeCache.txt`, `compile_commands.json` (see `.gitignore`). If one needs to change, the fix belongs in the source or CMake, not the generated artifact.
 - **`cmake/toolchains/aarch64-linux-gnu.cmake` ships with placeholder paths on purpose** — don't commit real device-specific sysroot/compiler paths into this file; set them via a local copy or `-D` overrides instead.
 - **`scripts/deploy_arm64.sh` takes `TARGET`/`DEST` as environment variables** — don't hardcode a device hostname, IP, or credential into the script or into any tracked file.

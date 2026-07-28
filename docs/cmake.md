@@ -13,10 +13,24 @@ CMake describes a target dependency graph; it is not primarily a shell script.
 - `qt_standard_project_setup()` enables Qt's generated-code conventions.
 - `qt_add_resources()` embeds QML into the binary.
 - `enable_testing()` and `add_test()` register CTest tests.
+- `FetchContent` makes the pinned GoogleTest source available when no system
+  package is installed.
+- `gtest_discover_tests()` registers individual GoogleTest cases with CTest.
 - `install()` describes the runtime layout used by packaging.
 
 The core library is linked by both the GUI and test executable. This prevents
 tests from compiling a subtly different copy of parser code.
+
+## Test Dependencies
+
+The project uses an installed `GTest` package when available and otherwise
+fetches GoogleTest `v1.17.0` at a fixed commit. `SYSMONITOR_FETCH_TEST_DEPS`
+controls whether that fallback is allowed. This keeps normal development
+convenient while preserving a documented offline/system-dependency mode.
+
+GoogleTest is linked through imported targets such as `GTest::gtest_main`, not
+by manually adding framework source files. QtTest remains a direct Qt
+dependency for tests that require QObject metadata or a Qt event loop.
 
 Use separate build directories for native and ARM64 builds. A toolchain file
 sets the compiler, sysroot, and target Qt package paths; mixing caches can make

@@ -18,6 +18,7 @@ class QmlRenderingTest final : public QObject {
 private slots:
     void loadsDashboardAndCards();
     void updatesViewModelProperties();
+    void formatsUnavailableTemperatureAndTruncatesHistory();
 };
 
 void QmlRenderingTest::loadsDashboardAndCards()
@@ -79,6 +80,24 @@ void QmlRenderingTest::updatesViewModelProperties()
     QCOMPARE(statsModel.memoryUsedMb(), 2000);
     QCOMPARE(statsModel.temperature(), QString("55.0 C"));
     QCOMPARE(statsModel.cpuHistory().size(), 1);
+}
+
+void QmlRenderingTest::formatsUnavailableTemperatureAndTruncatesHistory()
+{
+    StatsViewModel statsModel;
+    const SystemStats stats{
+        .cpuPercent = 10.0,
+        .memory = MemoryInfo{.totalKb = 1024, .availableKb = 512},
+        .temperatureCelsius = std::nullopt,
+    };
+
+    for (int sample = 0; sample < 61; ++sample) {
+        statsModel.updateStats(stats);
+    }
+
+    QCOMPARE(statsModel.temperature(), QString("unavailable"));
+    QCOMPARE(statsModel.cpuHistory().size(), 60);
+    QCOMPARE(statsModel.cpuHistory().constFirst().toDouble(), 10.0);
 }
 
 int main(int argc, char *argv[])

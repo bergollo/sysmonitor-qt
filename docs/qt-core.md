@@ -50,6 +50,10 @@ UI and view-model update in main thread
 The timer is created in `start()`, after the thread starts. Constructing it in
 the main thread would give it the wrong thread affinity.
 
+The worker receives a stats-reader function from the application wiring. This
+keeps Linux file access in the platform layer while allowing tests to provide a
+deterministic reader without touching `/proc` or depending on wall-clock timing.
+
 ## Shutdown
 
 `quit()` asks the event loop to stop. `wait()` joins the thread before stack
