@@ -16,6 +16,8 @@ CMake describes a target dependency graph; it is not primarily a shell script.
 - `FetchContent` makes the pinned GoogleTest source available when no system
   package is installed.
 - `gtest_discover_tests()` registers individual GoogleTest cases with CTest.
+- `CXX_CLANG_TIDY` attaches clang-tidy to selected project targets when the
+  opt-in static-analysis option is enabled.
 - `install()` describes the runtime layout used by packaging.
 
 The core library is linked by both the GUI and test executable. This prevents
@@ -31,6 +33,17 @@ convenient while preserving a documented offline/system-dependency mode.
 GoogleTest is linked through imported targets such as `GTest::gtest_main`, not
 by manually adding framework source files. QtTest remains a direct Qt
 dependency for tests that require QObject metadata or a Qt event loop.
+
+## Static Analysis Builds
+
+Static analysis uses fresh build directories and a compilation database. The
+normal `build/` cache should not be reused for analyzer experiments, and the
+ARM64 cache must remain separate from all native and ARM64 analysis caches.
+
+The CMake option `SYSMONITOR_ENABLE_CLANG_TIDY` applies clang-tidy only to
+project targets through the `CXX_CLANG_TIDY` target property. Clazy is run by
+`scripts/run_clazy.sh` because its Qt-aware standalone workflow is clearer than
+embedding a compiler wrapper into every target.
 
 Use separate build directories for native and ARM64 builds. A toolchain file
 sets the compiler, sysroot, and target Qt package paths; mixing caches can make

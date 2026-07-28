@@ -14,6 +14,7 @@ qt-sysmonitor/
 ├── .github/workflows/build.yml     # CI: build + unit tests (no display needed)
 ├── cmake/
 │   ├── CompilerWarnings.cmake
+│   ├── StaticAnalysis.cmake
 │   └── toolchains/aarch64-linux-gnu.cmake
 ├── src/
 │   ├── main.cpp                    # wires worker thread + both UIs together
@@ -34,12 +35,19 @@ qt-sysmonitor/
 │   ├── systemmonitorworker_test.cpp # QtTest worker integration tests
 │   └── qml_rendering_test.cpp      # QtTest/QML integration tests
 ├── docs/architecture.md            # layering, threading model, known limitations
+├── docs/static-analysis.md         # clang-tidy and Clazy workflow
 ├── scripts/deploy_arm64.sh
+├── scripts/run_clang_tidy.sh
+├── scripts/run_clazy.sh
 └── packaging/qt-sysmonitor.service
 ```
 
 See `docs/architecture.md` for the reasoning behind the `core` / `platform`
 / `ui` split and the threading model.
+
+Static analysis is opt-in and uses dedicated build directories. See
+`docs/static-analysis.md` for clang-tidy, Clazy, and compilation-database
+commands.
 
 ## Desktop build
 

@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project(QtSysMonitor VERSION 1.0 LANGUAGES CXX)
 
 include(cmake/CompilerWarnings.cmake)
+include(cmake/StaticAnalysis.cmake)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -29,6 +30,7 @@ target_include_directories(QtSysMonitorCore PUBLIC src)
 target_link_libraries(QtSysMonitorCore PUBLIC Qt6::Core)
 target_compile_features(QtSysMonitorCore PUBLIC cxx_std_20)
 enable_project_warnings(QtSysMonitorCore)
+enable_project_clang_tidy(QtSysMonitorCore)
 
 qt_add_executable(QtSysMonitor
     src/main.cpp
@@ -56,6 +58,7 @@ target_link_libraries(QtSysMonitor PRIVATE
     QtSysMonitorCore
 )
 enable_project_warnings(QtSysMonitor)
+enable_project_clang_tidy(QtSysMonitor)
 
 enable_testing()
 
@@ -84,6 +87,7 @@ target_link_libraries(SystemStatsGTests PRIVATE GTest::gtest_main QtSysMonitorCo
 target_include_directories(SystemStatsGTests PRIVATE src)
 target_compile_features(SystemStatsGTests PRIVATE cxx_std_20)
 enable_project_warnings(SystemStatsGTests)
+enable_project_clang_tidy(SystemStatsGTests)
 
 include(GoogleTest)
 gtest_discover_tests(SystemStatsGTests PROPERTIES LABELS "unit")
@@ -112,6 +116,7 @@ target_link_libraries(QmlRenderingTests PRIVATE
     QtSysMonitorCore
 )
 enable_project_warnings(QmlRenderingTests)
+enable_project_clang_tidy(QmlRenderingTests)
 
 add_test(NAME QmlRenderingTests COMMAND QmlRenderingTests)
 set_tests_properties(QmlRenderingTests PROPERTIES
@@ -127,6 +132,7 @@ target_include_directories(SystemMonitorWorkerTests PRIVATE src)
 target_compile_features(SystemMonitorWorkerTests PRIVATE cxx_std_20)
 target_link_libraries(SystemMonitorWorkerTests PRIVATE Qt6::Core Qt6::Test QtSysMonitorCore)
 enable_project_warnings(SystemMonitorWorkerTests)
+enable_project_clang_tidy(SystemMonitorWorkerTests)
 
 add_test(NAME SystemMonitorWorkerTests COMMAND SystemMonitorWorkerTests)
 set_tests_properties(SystemMonitorWorkerTests PROPERTIES LABELS "integration;headless")

@@ -20,6 +20,9 @@ natively, with an optional ARM64 cross-build via `cmake/toolchains/aarch64-linux
 # Install deps (Ubuntu; GoogleTest is fetched if no system package is present)
 sudo apt install cmake build-essential qt6-base-dev qt6-charts-dev qt6-declarative-dev
 
+# Optional static-analysis tools
+sudo apt install clang-tidy clang-tools clazy
+
 # Configure + build
 cmake -S . -B build
 cmake --build build --parallel
@@ -35,9 +38,10 @@ clang-format -i $(git diff --name-only -- '*.cpp' '*.h')
 git diff --check
 ```
 
-There is no separate lint step beyond compiler warnings (`cmake/CompilerWarnings.cmake`, applied to
-every target via `enable_project_warnings(...)`) and `.clang-format`. A warning is a build failure to
-fix, not something to suppress.
+Compiler warnings (`cmake/CompilerWarnings.cmake`, applied to every target via
+`enable_project_warnings(...)`) are always enabled. clang-tidy and Clazy are
+opt-in static-analysis workflows; see `docs/static-analysis.md`. A warning is a
+build failure to fix, not something to suppress.
 
 ## Directory Orientation
 
@@ -48,7 +52,8 @@ fix, not something to suppress.
 | `src/ui/` | `mainwindow.*` (Widgets), `statsviewmodel.*` (QML view-model). Both consume `core/`, never `platform/` directly. |
 | `qml/` | `Dashboard.qml` + `components/` (e.g. `StatCard.qml`). |
 | `tests/` | GoogleTest unit tests plus QtTest worker and QML integration tests. |
-| `cmake/` | `CompilerWarnings.cmake`, `toolchains/aarch64-linux-gnu.cmake`. |
+| `cmake/` | Compiler warnings, static-analysis integration, and the ARM64 toolchain. |
+| `scripts/` | Deployment and opt-in clang-tidy/Clazy analysis runners. |
 | `docs/` | Deeper docs — see Pointers below. |
 
 ## Coding Conventions
@@ -104,6 +109,8 @@ StatCard { ... }
 - **Native and ARM64 builds must use separate build directories** (`build/` vs `build-aarch64/` or similar) — never reconfigure the native cache with the cross-toolchain file.
 - **`SystemStatsGTests` links `QtSysMonitorCore`** — do not add duplicate copies of `core/`/`platform/` sources directly to test targets.
 - **Use GoogleTest for pure C++ and QtTest for Qt/QML integration.** Do not introduce a second general-purpose test framework without updating the testing architecture.
+- **Static analysis uses dedicated build directories.** Do not enable Clazy or clang-tidy in the normal build cache or analyze generated and third-party files.
+- **Analyzer suppressions must be narrow and explained.** Prefer fixing code or tightening analyzer configuration over broad `NOLINT` comments.
 - **Generated files are off-limits:** anything under `build*/`, `moc_*.cpp`, `moc_*.h`, `qrc_*.cpp`, `ui_*.h`, `CMakeCache.txt`, `compile_commands.json` (see `.gitignore`). If one needs to change, the fix belongs in the source or CMake, not the generated artifact.
 - **`cmake/toolchains/aarch64-linux-gnu.cmake` ships with placeholder paths on purpose** — don't commit real device-specific sysroot/compiler paths into this file; set them via a local copy or `-D` overrides instead.
 - **`scripts/deploy_arm64.sh` takes `TARGET`/`DEST` as environment variables** — don't hardcode a device hostname, IP, or credential into the script or into any tracked file.
@@ -116,4 +123,5 @@ Start at `docs/README.md` for the full learning-path order. Most relevant per ta
 - `docs/qt-widgets.md`, `docs/qml.md` — UI-layer specifics for `ui/` and `qml/`
 - `docs/cmake.md` — target graph and build-system decisions
 - `docs/testing.md` — what `tests/` does and doesn't cover
+- `docs/static-analysis.md` — clang-tidy and Clazy workflow, checks, and suppressions
 - `docs/deployment.md` — ARM64 cross-compile and on-device deployment

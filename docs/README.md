@@ -12,9 +12,10 @@ order:
 6. [QML](qml.md)
 7. [CMake](cmake.md)
 8. [Testing](testing.md)
-9. [Architecture](architecture.md)
-10. [Exercises](exercises.md)
-11. [Deployment](deployment.md)
+9. [Static analysis](static-analysis.md)
+10. [Architecture](architecture.md)
+11. [Exercises](exercises.md)
+12. [Deployment](deployment.md)
 
 Use the source as the worked example. `src/core/` is the best starting point
 for plain C++, `src/platform/linux/` shows boundary code, and `src/ui/` shows

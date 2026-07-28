@@ -19,3 +19,22 @@ jobs:
         run: ctest --test-dir build --output-on-failure
       - name: Headless smoke test
         run: QT_QPA_PLATFORM=offscreen ./build/QtSysMonitor
+
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install analysis tools and dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build clang-tidy clang-tools clazy qt6-base-dev qt6-charts-dev qt6-declarative-dev
+      - name: Print tool versions
+        run: |
+          clang-tidy --version
+          clazy-standalone --version
+      - name: Configure analysis build
+        run: cmake -S . -B build-static-analysis -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DSYSMONITOR_FETCH_TEST_DEPS=ON
+      - name: Build analysis database
+        run: cmake --build build-static-analysis --parallel
+      - name: Run clang-tidy
+        run: ./scripts/run_clang_tidy.sh build-static-analysis --strict
+      - name: Run Clazy level 1
+        run: ./scripts/run_clazy.sh build-static-analysis level1

@@ -17,10 +17,11 @@ while QtTest understands QObject metadata, signals, event loops, and Qt Quick.
 Adding both GoogleTest and Catch2 would duplicate the general-purpose layer
 without improving coverage or the learning path.
 
-The current tests write realistic `/proc` fixtures into `QTemporaryDir`. This
-keeps tests deterministic and avoids depending on the host's changing CPU or
-memory state. Malformed input and counter edge cases should be tested as
-explicit contracts, not inferred from one machine.
+The current GoogleTest tests write realistic `/proc` fixtures into temporary
+directories using the standard filesystem library. This keeps tests
+deterministic and avoids depending on the host's changing CPU or memory state.
+Malformed input and counter edge cases should be tested as explicit contracts,
+not inferred from one machine.
 
 Useful next tests:
 
@@ -63,3 +64,5 @@ protects: parser callers handle `std::optional`, and view-model updates emit
 `statsChanged` and expose the expected property values. The QML rendering test
 covers resource loading, the property-binding boundary, missing sensor
 presentation, and bounded history behavior.
+
+Static analysis is documented separately in [Static analysis](static-analysis.md).
