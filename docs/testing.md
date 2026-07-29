@@ -65,4 +65,5 @@ protects: parser callers handle `std::optional`, and view-model updates emit
 covers resource loading, the property-binding boundary, missing sensor
 presentation, and bounded history behavior.
 
-Static analysis is documented separately in [Static analysis](static-analysis.md).
+Static analysis is documented separately in [Static analysis](static-analysis.md),
+and sanitizer-based dynamic checks are covered in [Dynamic analysis](dynamic-analysis.md).

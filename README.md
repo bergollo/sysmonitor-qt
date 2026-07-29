@@ -35,8 +35,10 @@ qt-sysmonitor/
 │   ├── systemmonitorworker_test.cpp # QtTest worker integration tests
 │   └── qml_rendering_test.cpp      # QtTest/QML integration tests
 ├── docs/architecture.md            # layering, threading model, known limitations
+├── docs/dynamic-analysis.md        # ASan, UBSan, and TSan workflow
 ├── docs/static-analysis.md         # clang-tidy and Clazy workflow
 ├── scripts/deploy_arm64.sh
+├── scripts/run_sanitized_tests.sh
 ├── scripts/run_clang_tidy.sh
 ├── scripts/run_clazy.sh
 └── packaging/qt-sysmonitor.service
@@ -47,7 +49,8 @@ See `docs/architecture.md` for the reasoning behind the `core` / `platform`
 
 Static analysis is opt-in and uses dedicated build directories. See
 `docs/static-analysis.md` for clang-tidy, Clazy, and compilation-database
-commands.
+commands. Sanitizer-based dynamic checks are documented in
+`docs/dynamic-analysis.md`.
 
 ## Desktop build
 

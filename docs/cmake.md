@@ -45,6 +45,12 @@ project targets through the `CXX_CLANG_TIDY` target property. Clazy is run by
 `scripts/run_clazy.sh` because its Qt-aware standalone workflow is clearer than
 embedding a compiler wrapper into every target.
 
+`SYSMONITOR_SANITIZER` applies sanitizer compile and link flags to project
+targets. The sanitizer runtime must be linked into every executable that uses
+the instrumented static library, which is why the helper is called for both
+`QtSysMonitorCore` and each executable target. TSan is intentionally configured
+as a separate build from ASan and UBSan.
+
 Use separate build directories for native and ARM64 builds. A toolchain file
 sets the compiler, sysroot, and target Qt package paths; mixing caches can make
 CMake appear to find host libraries for a target build.

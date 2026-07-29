@@ -38,3 +38,18 @@ jobs:
         run: ./scripts/run_clang_tidy.sh build-static-analysis --strict
       - name: Run Clazy level 1
         run: ./scripts/run_clazy.sh build-static-analysis level1
+
+  sanitizers:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sanitizer: [address, undefined, thread]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build qt6-base-dev qt6-charts-dev qt6-declarative-dev
+      - name: Print compiler version
+        run: c++ --version
+      - name: Run ${{ matrix.sanitizer }} tests
+        run: ./scripts/run_sanitized_tests.sh "${{ matrix.sanitizer }}" "build-sanitize-${{ matrix.sanitizer }}"

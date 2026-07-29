@@ -11,7 +11,7 @@ natively, with an optional ARM64 cross-build via `cmake/toolchains/aarch64-linux
 
 - **Language:** C++20, QML
 - **Framework:** Qt 6 — Core, Widgets, Charts, Quick, QuickWidgets, Test; GoogleTest 1.17.0 for C++ unit tests
-- **Build:** CMake ≥ 3.16 (targets: `QtSysMonitorCore`, `QtSysMonitor`, `SystemStatsGTests`, `SystemMonitorWorkerTests`, `QmlRenderingTests`)
+- **Build:** CMake ≥ 3.16 (targets: `QtSysMonitorCore`, `QtSysMonitor`, `SystemStatsGTests`, `SystemMonitorWorkerTests`, `QmlRenderingTests`; sanitizer configurations: ASan, UBSan, TSan)
 - **Platform:** Linux (`/proc`, `/sys/class/thermal`); ARM64 cross-compile supported, not primary
 
 ## Commands
@@ -29,6 +29,11 @@ cmake --build build --parallel
 
 # Test
 ctest --test-dir build --output-on-failure
+
+# Dynamic analysis (each mode uses a separate build directory)
+./scripts/run_sanitized_tests.sh address
+./scripts/run_sanitized_tests.sh undefined
+./scripts/run_sanitized_tests.sh thread
 
 # Run (headless smoke test — no display required)
 QT_QPA_PLATFORM=offscreen ./build/QtSysMonitor
@@ -111,6 +116,7 @@ StatCard { ... }
 - **Use GoogleTest for pure C++ and QtTest for Qt/QML integration.** Do not introduce a second general-purpose test framework without updating the testing architecture.
 - **Static analysis uses dedicated build directories.** Do not enable Clazy or clang-tidy in the normal build cache or analyze generated and third-party files.
 - **Analyzer suppressions must be narrow and explained.** Prefer fixing code or tightening analyzer configuration over broad `NOLINT` comments.
+- **Sanitizers use dedicated build directories.** Never combine TSan with ASan or UBSan, and do not assume sanitizer support in the ARM64 sysroot without verifying the runtime.
 - **Generated files are off-limits:** anything under `build*/`, `moc_*.cpp`, `moc_*.h`, `qrc_*.cpp`, `ui_*.h`, `CMakeCache.txt`, `compile_commands.json` (see `.gitignore`). If one needs to change, the fix belongs in the source or CMake, not the generated artifact.
 - **`cmake/toolchains/aarch64-linux-gnu.cmake` ships with placeholder paths on purpose** — don't commit real device-specific sysroot/compiler paths into this file; set them via a local copy or `-D` overrides instead.
 - **`scripts/deploy_arm64.sh` takes `TARGET`/`DEST` as environment variables** — don't hardcode a device hostname, IP, or credential into the script or into any tracked file.
@@ -124,4 +130,5 @@ Start at `docs/README.md` for the full learning-path order. Most relevant per ta
 - `docs/cmake.md` — target graph and build-system decisions
 - `docs/testing.md` — what `tests/` does and doesn't cover
 - `docs/static-analysis.md` — clang-tidy and Clazy workflow, checks, and suppressions
+- `docs/dynamic-analysis.md` — ASan, UBSan, TSan workflow and runtime options
 - `docs/deployment.md` — ARM64 cross-compile and on-device deployment

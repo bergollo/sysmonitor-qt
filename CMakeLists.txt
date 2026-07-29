@@ -4,6 +4,7 @@ project(QtSysMonitor VERSION 1.0 LANGUAGES CXX)
 
 include(cmake/CompilerWarnings.cmake)
 include(cmake/StaticAnalysis.cmake)
+include(cmake/Sanitizers.cmake)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -31,6 +32,7 @@ target_link_libraries(QtSysMonitorCore PUBLIC Qt6::Core)
 target_compile_features(QtSysMonitorCore PUBLIC cxx_std_20)
 enable_project_warnings(QtSysMonitorCore)
 enable_project_clang_tidy(QtSysMonitorCore)
+enable_project_sanitizer(QtSysMonitorCore)
 
 qt_add_executable(QtSysMonitor
     src/main.cpp
@@ -59,6 +61,7 @@ target_link_libraries(QtSysMonitor PRIVATE
 )
 enable_project_warnings(QtSysMonitor)
 enable_project_clang_tidy(QtSysMonitor)
+enable_project_sanitizer(QtSysMonitor)
 
 enable_testing()
 
@@ -88,9 +91,20 @@ target_include_directories(SystemStatsGTests PRIVATE src)
 target_compile_features(SystemStatsGTests PRIVATE cxx_std_20)
 enable_project_warnings(SystemStatsGTests)
 enable_project_clang_tidy(SystemStatsGTests)
+enable_project_sanitizer(SystemStatsGTests)
 
 include(GoogleTest)
-gtest_discover_tests(SystemStatsGTests PROPERTIES LABELS "unit")
+gtest_discover_tests(SystemStatsGTests
+    PROPERTIES LABELS "unit"
+    TEST_LIST SystemStatsGTestCases
+)
+set_tests_properties(${SystemStatsGTestCases} PROPERTIES LABELS "unit;sanitizer")
+if(NOT SYSMONITOR_SANITIZER STREQUAL "none")
+    # GoogleTest discovery happens at build/test time, so provide one stable
+    # CTest entry for sanitizer runners in addition to individual test cases.
+    add_test(NAME SystemStatsGTestsSanitized COMMAND SystemStatsGTests)
+    set_tests_properties(SystemStatsGTestsSanitized PROPERTIES LABELS "sanitizer")
+endif()
 
 qt_add_executable(QmlRenderingTests
     tests/qml_rendering_test.cpp
@@ -121,7 +135,7 @@ enable_project_clang_tidy(QmlRenderingTests)
 add_test(NAME QmlRenderingTests COMMAND QmlRenderingTests)
 set_tests_properties(QmlRenderingTests PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
-    LABELS "integration;qml;headless"
+    LABELS "integration;qml;headless;sanitizer"
 )
 
 qt_add_executable(SystemMonitorWorkerTests
@@ -133,9 +147,10 @@ target_compile_features(SystemMonitorWorkerTests PRIVATE cxx_std_20)
 target_link_libraries(SystemMonitorWorkerTests PRIVATE Qt6::Core Qt6::Test QtSysMonitorCore)
 enable_project_warnings(SystemMonitorWorkerTests)
 enable_project_clang_tidy(SystemMonitorWorkerTests)
+enable_project_sanitizer(SystemMonitorWorkerTests)
 
 add_test(NAME SystemMonitorWorkerTests COMMAND SystemMonitorWorkerTests)
-set_tests_properties(SystemMonitorWorkerTests PROPERTIES LABELS "integration;headless")
+set_tests_properties(SystemMonitorWorkerTests PROPERTIES LABELS "integration;headless;sanitizer")
 
 install(TARGETS QtSysMonitor
     RUNTIME DESTINATION bin

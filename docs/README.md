@@ -13,9 +13,10 @@ order:
 7. [CMake](cmake.md)
 8. [Testing](testing.md)
 9. [Static analysis](static-analysis.md)
-10. [Architecture](architecture.md)
-11. [Exercises](exercises.md)
-12. [Deployment](deployment.md)
+10. [Dynamic analysis](dynamic-analysis.md)
+11. [Architecture](architecture.md)
+12. [Exercises](exercises.md)
+13. [Deployment](deployment.md)
 
 Use the source as the worked example. `src/core/` is the best starting point
 for plain C++, `src/platform/linux/` shows boundary code, and `src/ui/` shows
